@@ -1,0 +1,38 @@
+#!/bin/sh -e
+##:
+#h: Usage: alert-ntfy [-t TITLE] MESSAGE
+#h:
+#h: Send alert using "ntfy.sh". Please set the NTFY_TOPIC environment
+#h: variable to the topic you want to send the alert to.
+##:
+alert_ntfy() {
+    local OPTIND optopt title="$(uname -n)"
+    
+    ## Parse command line arguments.
+    while getopts "t:" optopt; do
+        case $optopt in
+            t)  title="${OPTARG}";;
+            \?) return 1;;
+        esac
+    done
+    shift $(( $OPTIND - 1 ))
+    
+    ## Require NTFY_TOPIC.
+    if test ! -n "${NTFY_TOPIC}"; then
+        echo >&2 "error: Please set NTFY_TOPIC."
+        return 1
+    fi
+    
+    wget -q -O - \
+         --header "Priority: high" \
+         --header "Title: ${title}" \
+         --post-data "$*" \
+         "http://ntfy.sh/${NTFY_TOPIC}" \
+         > /dev/null
+}
+if test @"${SCRNAME:-$(basename "$0")}" = @"alert-ntfy"; then
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        *)            alert_ntfy "$@"; exit 0;;
+    esac
+fi
