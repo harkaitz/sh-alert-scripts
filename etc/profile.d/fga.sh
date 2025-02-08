@@ -3,7 +3,7 @@ fga() {
         echo "Usage: fga [JOB_ID]"
         echo ""
         echo "Wait the job to finish, then execute the command in TIMED_ALERT, or"
-        echo "if not set notify-send(1) when installed."
+        echo "if not set notify-send(1) when finished."
         return 0
     elif test -n "${TIMED_ALERT}"; then
         local cmd="${TIMED_ALERT}"
