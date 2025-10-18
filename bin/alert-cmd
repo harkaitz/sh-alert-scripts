@@ -1,0 +1,52 @@
+#!/bin/sh -e
+##:
+#h: Usage: ${ALERT_CMD:-alert-cmd} { -V | CMD... }
+#h:
+#h: Execute command, it it lasts more than a minute or it fails alerts
+#h: the user executing ALERT_CMD.
+#h:
+#h: Environment variables: ALERT_CMD ALERT_CMD_{NOTIFIER,SECONDS}
+##:
+alert_cmd() {
+    local start end duration ret res
+    
+    # Execute command.
+    start="$(date +%s)"
+    if "$@"; then ret=0 res=Success; else ret=1 res=Failure; fi
+    end="$(date +%s)"
+    duration=$(( end - start ))
+
+    # Notifications disabled.
+    if test ! -t 1; then
+        return "${ret}"
+    elif test ! -n "${ALERT_CMD_NOTIFIER}"; then
+        echo "warning: Please set ALERT_CMD_NOTIFIER for notifications." >&2
+        return "${ret}"
+    fi
+    
+    # Execute timed.
+    if test "$ret" = "0" || test "${duration}" -ge "${ALERT_CMD_SECONDS}"; then
+        ${ALERT_CMD_NOTIFIER} "${res}: $*" || true
+    fi
+    
+    return "${ret}"
+}
+alert_cmd_show_variables() {
+    cat <<-EOF
+	ALERT_CMD          : ${ALERT_CMD}
+	ALERT_CMD_NOTIFIER : ${ALERT_CMD_NOTIFIER}
+	ALERT_CMD_SECONDS  : ${ALERT_CMD_SECONDS}
+	EOF
+}
+alert_cmd_calc_variables() {
+    ALERT_CMD_SECONDS="${ALERT_CMD_SECONDS:-60}"
+}
+# --------------------------------------------------------------------
+alert_cmd_calc_variables
+if test @"${SCRNAME:-$(basename "$0")}" = @"alert-cmd"; then
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        -V)  alert_cmd_show_variables; exit 0;;
+        *)   alert_cmd "$@"; exit 0;;
+    esac
+fi

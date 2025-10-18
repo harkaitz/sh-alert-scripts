@@ -35,6 +35,15 @@ default notify-send(1) is used.
 
 ## Help
 
+alert-cmd
+
+    Usage: ${ALERT_CMD:-alert-cmd} { -V | CMD... }
+    
+    Execute command, it it lasts more than a minute or it fails alerts
+    the user executing ALERT_CMD.
+    
+    Environment variables: ALERT_CMD ALERT_CMD_{NOTIFIER,SECONDS}
+
 alert-ntfy
 
     Usage: alert-ntfy [-t TITLE] MESSAGE
@@ -44,8 +53,9 @@ alert-ntfy
 
 ## Collaborating
 
-For making bug reports, feature requests and donations visit
-one of the following links:
+Feel free to open bug reports and feature/pull requests.
 
-1. [gemini://harkadev.com/oss/](gemini://harkadev.com/oss/)
-2. [https://harkadev.com/oss/](https://harkadev.com/oss/)
+More software like this here:
+
+1. [https://harkadev.com/prj/](https://harkadev.com/prj/)
+2. [https://devreal.org](https://devreal.org)

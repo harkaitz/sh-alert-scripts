@@ -8,8 +8,8 @@ install:
 ## -- BLOCK:license --
 install: install-license
 install-license: README.md COPYING COPYRIGHT
-	mkdir -p $(DESTDIR)$(PREFIX)/share/doc/$(PROJECT)
-	cp README.md COPYING COPYRIGHT $(DESTDIR)$(PREFIX)/share/doc/$(PROJECT)
+	install -d $(DESTDIR)$(PREFIX)/share/doc/$(PROJECT)
+	install -c -m 644 README.md COPYING COPYRIGHT $(DESTDIR)$(PREFIX)/share/doc/$(PROJECT)
 ## -- BLOCK:license --
 ## -- BLOCK:profile --
 install: install-profile
@@ -21,6 +21,7 @@ install-profile:
 ## -- BLOCK:sh --
 install: install-sh
 install-sh:
-	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp bin/alert-ntfy $(DESTDIR)$(PREFIX)/bin
+	install -d $(DESTDIR)$(PREFIX)/bin
+	install -c -m 755 bin/alert-ntfy $(DESTDIR)$(PREFIX)/bin
+	install -c -m 755 bin/alert-cmd $(DESTDIR)$(PREFIX)/bin
 ## -- BLOCK:sh --
