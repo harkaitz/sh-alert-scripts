@@ -24,8 +24,8 @@ alert_cmd() {
     duration=$(( end - start ))
     
     # Execute timed.
-    if test "${ret}" = "0" || test "${duration}" -ge "${ALERT_CMD_SECONDS}"; then
-        ${NOTIFY_SEND:-notify-send -a alert-cmd} "${res}: $*" "Program finished" || true
+    if test "${ret}" = "1" || test "${duration}" -ge "${ALERT_CMD_SECONDS}"; then
+        ${NOTIFY_SEND:-notify-send -a} "$1" "${res}" "$*" || true
     fi
     
     return "${ret}"
@@ -40,6 +40,7 @@ if test @"${SCRNAME:-$(basename "$0")}" = @"alert-cmd"; then
         -V) cat <<-EOF
 		ALERT_CMD          : ${ALERT_CMD}
 		ALERT_CMD_SECONDS  : ${ALERT_CMD_SECONDS}
+		NOTIFY_SEND        : ${NOTIFY_SEND:-notify-send -a}
 		EOF
             ;;
         *)  alert_cmd "$@"
