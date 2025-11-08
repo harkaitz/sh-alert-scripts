@@ -42,14 +42,36 @@ alert-cmd
     Execute command, it it lasts more than a minute or it fails alerts
     the user executing ALERT_CMD.
     
-    Environment variables: ALERT_CMD ALERT_CMD_{NOTIFIER,SECONDS}
+    Default programs: quiet, notify-send
+    Environment variables: QUIT, NOTIFY_SEND, ALERT_CMD_SECONDS
 
-alert-ntfy
+notify-send-multi
 
-    Usage: alert-ntfy [-t TITLE] MESSAGE
+    Usage: notify-send-multi [-a APP] TITLE BODY
     
-    Send alert using "ntfy.sh". Please set the NTFY_TOPIC environment
-    variable to the topic you want to send the alert to.
+    Send notification to multiple notification utilities.
+    
+        APP CATEGORY NOTIFIERS,...
+        APP .*       NOTIFIERS,...
+        .*  .*       NOTIFIERS,...
+    
+    Configuration files: ~/.notify.lst
+    Environment variables: QUIET, NOTIFY_SEND_MULTI_LST
+
+notify-send-nircmd
+
+    Usage: notify-send-nircmd [-a APP] SUBJECT BODY
+    
+    Send notification using nircmd (windows).
+
+notify-send-ntfy
+
+    Usage: notify-send-ntfy [-a APP] SUBJECT BODY
+    
+    Send alert using "ntfy.sh".
+    
+    Environment variables/settings: NTFY_TOPIC (required)
+    Configuration file: ~/.config.sh
 
 ## Collaborating
 

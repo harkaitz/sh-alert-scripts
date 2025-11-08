@@ -1,9 +1,11 @@
+.POSIX: # POSIX Makefile, use make,gmake,pdpmake,bmake
 PROJECT=sh-alert-scripts
 VERSION=1.0.0
 PREFIX=/usr/local
 all:
 clean:
 install:
+check:
 
 ## -- BLOCK:license --
 install: install-license
@@ -22,6 +24,8 @@ install-profile:
 install: install-sh
 install-sh:
 	install -d $(DESTDIR)$(PREFIX)/bin
-	install -c -m 755 bin/alert-ntfy $(DESTDIR)$(PREFIX)/bin
 	install -c -m 755 bin/alert-cmd $(DESTDIR)$(PREFIX)/bin
+	install -c -m 755 bin/notify-send-nircmd $(DESTDIR)$(PREFIX)/bin
+	install -c -m 755 bin/notify-send-ntfy $(DESTDIR)$(PREFIX)/bin
+	install -c -m 755 bin/notify-send-multi $(DESTDIR)$(PREFIX)/bin
 ## -- BLOCK:sh --

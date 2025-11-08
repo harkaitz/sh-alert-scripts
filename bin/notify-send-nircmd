@@ -1,0 +1,37 @@
+#!/bin/sh -e
+##:
+#h: Usage: notify-send-nircmd [-a APP] SUBJECT BODY
+#h:
+#h: Send notification using nircmd (windows).
+##:
+notify_send_nircmd() {
+    local OPTIND=1 optopt app="$(uname -n)" subject body
+    
+    # Parse command line arguments.
+    while getopts "a:" optopt; do # OPTARG
+        case $optopt in
+            a)  app="${OPTARG}";;
+            \?) return 1;;
+        esac
+    done
+    shift $(( $OPTIND - 1 ))
+    subject="$1" body="$2"
+    if test ! -n "${subject}"; then
+        echo "error: Please specify a subject." >&2
+        return 1
+    fi
+
+    if test -n "${QUIET}" || quiet >/dev/null 2>&1; then
+        echo "warning: Quiet mode set." >&2
+        return 0
+    fi
+    
+    nircmd trayballoon "${app:+${app} - }${subject}" "${body}" shell32.dll
+}
+# --------------------------------------------------------------------
+if test @"${0##*/}" = @"notify-send-nircmd"; then
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        *)            notify_send_nircmd "$@"; exit 0;;
+    esac
+fi

@@ -1,0 +1,49 @@
+#!/bin/sh -e
+##:
+#h: Usage: notify-send-ntfy [-a APP] SUBJECT BODY
+#h:
+#h: Send alert using "ntfy.sh".
+#h:
+#h: Environment variables/settings: NTFY_TOPIC (required)
+#h: Configuration file: ~/.config.sh
+##:
+notify_send_ntfy() {
+    local OPTIND optopt app="$(uname -n)" subject body
+    
+    ## Parse command line arguments.
+    while getopts "a:" optopt; do
+        case $optopt in
+            a)  app="${OPTARG}";;
+            \?) return 1;;
+        esac
+    done
+    shift $(( $OPTIND - 1 ))
+    subject="$1" body="$2"
+    if test ! -n "${subject}"; then
+        echo "error: Please specify a subject." >&2
+        return 1
+    fi
+    if test ! -n "${NTFY_TOPIC}"; then
+        echo "error: Please set NTFY_TOPIC." >&2
+        return 1
+    fi
+    if test -n "${QUIET}" || quiet >/dev/null 2>&1; then
+        echo "warning: Quiet mode set." >&2
+        return 0
+    fi
+    
+    wget -q -O - \
+         --header "Priority: high" \
+         --header "Title: ${app:+${app} - }${subject}" \
+         --post-data "${body}" \
+         "http://ntfy.sh/${NTFY_TOPIC}" \
+         > /dev/null
+}
+# --------------------------------------------------------------------
+if test @"${0##*/}" = @"notify-send-ntfy"; then
+    test ! -f ~/.config.sh || . ~/.config.sh
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        *)            notify_send_ntfy "$@"; exit 0;;
+    esac
+fi

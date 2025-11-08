@@ -1,0 +1,63 @@
+#!/bin/sh -e
+##:
+#h: Usage: notify-send-multi [-a APP] TITLE BODY
+#h:
+#h: Send notification to multiple notification utilities.
+#h:
+#h:     APP CATEGORY NOTIFIERS,...
+#h:     APP .*       NOTIFIERS,...
+#h:     .*  .*       NOTIFIERS,...
+#h:
+#h: Configuration files: ~/.notify.lst
+#h: Environment variables: QUIET, NOTIFY_SEND_MULTI_LST
+##:
+notify_send_multi() {
+    local OPTIND=1 optopt app= cat= programs= title body p
+
+    # Parse command line arguments.
+    while getopts "a:c:" optopt; do # OPTARG
+        case $optopt in
+            a)  app="${OPTARG}";;
+            c)  cat="${OPTARG}";;
+            \?) return 1;;
+        esac
+    done
+    shift $(( $OPTIND - 1 ))
+    if test ! -n "${1}"; then
+        echo "error: Please specify a subject." >&2
+        return 1
+    fi
+
+    # Check quiet mode.
+    if test -n "${QUIET}" || quiet >/dev/null 2>&1; then
+        echo "warning: Quiet mode set." >&2
+        return 0
+    fi
+
+    # Search programs.
+    if test -n "${app}" && test -f "${NOTIFY_SEND_MULTI_LST}"; then
+        programs="$(awk -v a="${app}" -v c="${cat}" '
+            a ~ $1 && c ~ $2 { print $3; exit(0) }
+        ' "${NOTIFY_SEND_MULTI_LST}")"
+    fi
+    
+    # If program not found.
+    if test ! -n "${programs}"; then
+        notify-send ${app:+ -a "${app}" } -- "$@"
+        return 0
+    fi
+
+    # Send with other.
+    for p in $(echo "${programs}" | tr ',' ' '); do
+        notify-send-"${p}" ${app:+ -a "${app}" } -- "$@" || true
+    done
+}
+# --------------------------------------------------------------------
+: ${NOTIFY_SEND_MULTI_LST:=${USERPROFILE:-${HOME}}/.notify.lst}
+if test @"${0##*/}" = @"notify-send-multi"; then
+    export MSYS_NO_PATHCONV=1
+    case "${1}" in
+        ''|-h|--help) sed -n 's/^ *#h: \{0,1\}//p' "$0";;
+        *)            notify_send_multi "$@"; exit 0;;
+    esac
+fi
