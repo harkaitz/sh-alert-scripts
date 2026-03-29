@@ -1,7 +1,13 @@
 .POSIX: # POSIX Makefile, use make,gmake,pdpmake,bmake
-PROJECT=sh-alert-scripts
-VERSION=1.0.0
-PREFIX=/usr/local
+.SUFFIXES:
+.PHONY: all clean install check
+
+PROJECT    =sh-alert-scripts
+VERSION    =1.0.0
+PREFIX     =/usr/local
+TOOLCHAINS =noarch
+DESTDIR    =$(HOMEDRIVE)
+
 all:
 clean:
 install:

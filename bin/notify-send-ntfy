@@ -36,7 +36,7 @@ notify_send_ntfy() {
          --header "Priority: high" \
          --header "Title: ${app:+${app} - }${subject}" \
          --post-data "${body}" \
-         "http://ntfy.sh/${NTFY_TOPIC}" \
+         "https://ntfy.sh/${NTFY_TOPIC}" \
          > /dev/null
 }
 # --------------------------------------------------------------------

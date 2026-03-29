@@ -3,7 +3,8 @@
 #h: Usage: ${ALERT_CMD:-alert-cmd} { -V | CMD... }
 #h:
 #h: Execute command, it it lasts more than a minute or it fails alerts
-#h: the user executing ALERT_CMD.
+#h: the user executing NOTIFY_SEND. Set NOTIFY_SEND=alert-ntfy for example
+#h: to receive alrts from "ntfy.sh".
 #h:
 #h: Default programs: quiet, notify-send
 #h: Environment variables: QUIT, NOTIFY_SEND, ALERT_CMD_SECONDS
